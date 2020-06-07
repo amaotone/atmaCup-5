@@ -17,7 +17,9 @@ $ poetry run python run_lgbm.py  # LightGBMを訓練&予測
 $ poetry run python run_nn.py  # NNを訓練&予測
 ```
 
-## 解法概要
+## 解法
+
+特にスコア向上に貢献した項目を太字にします。
 
 ### 全体像
 
@@ -25,7 +27,7 @@ $ poetry run python run_nn.py  # NNを訓練&予測
   - 実はアンサンブルをせず、NN単体の方が良い精度が出ていました
 - スペクトルにはSavitzky-Golay Filteringをかけました
   - 細かいノイズを除去し、微分により意味を持たせるためです
-- スペクトルに微分をかけることで情報量を増やしました
+- **スペクトルに微分をかけました**
   - ピークの形状やピークの重なりなどの特徴を抽出できると考えました
 
 ### LightGBM
@@ -38,8 +40,8 @@ $ poetry run python run_nn.py  # NNを訓練&予測
 - スペクトルはConv1Dに通しました
 - LightGBMで使った特徴量のうち、効いていたものをMLPに通しました
 - 上2つをconcatし、MLPに通して出力を得ました
-- Conv1Dは複数のkernel_sizeに並列に通し、GlobalMaxPoolingをかけたあとにconcatしました
-- Conv1Dのkernel_sizeを大きめに取ることでスコアが改善しました
+- **Conv1Dは複数のkernel_sizeに並列に通し**、GlobalMaxPoolingをかけたあとにconcatしました
+- Conv1Dの**kernel_sizeを大きめに取りました**（最大101）
 
 以下は試していないことです。
 
@@ -59,7 +61,7 @@ $ poetry run python run_nn.py  # NNを訓練&予測
 ### コンペ中と追加実験時の差分
 
 - スペクトルの3次微分がすべて0になっていたので抜きました
-- sample-wise scalingを、各サンプルごと→各サンプル各チャネルごと に変更しました
+- **sample-wise scalingを、各サンプルごと→各サンプル各チャネルごと に変更しました**
 - 連続特徴量を入れる側のMLPのDropoutを外しました
 - 学習時にCosineAnnealingを入れました
 
