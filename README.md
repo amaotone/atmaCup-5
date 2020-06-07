@@ -38,7 +38,7 @@ $ poetry run python run_nn.py  # NNを訓練&予測
 ### NN
 
 - スペクトルはConv1Dに通しました
-- LightGBMで使った特徴量のうち、効いていたものをMLPに通しました
+- LightGBMで使った特徴量のうち、効いていたものをrankgaussにかけ、MLPに通しました
 - 上2つをconcatし、MLPに通して出力を得ました
 - **Conv1Dは複数のkernel_sizeに並列に通し**、GlobalMaxPoolingをかけたあとにconcatしました
 - Conv1Dの**kernel_sizeを大きめに取りました**（最大101）
