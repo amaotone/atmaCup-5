@@ -47,6 +47,13 @@ $ poetry run python run_nn.py  # NNを訓練&予測
 - コンペ時点では `LightGBM:NN = 0.25:0.75` でアンサンブルしていました
 - 結果として、LightGBM を混ぜない方がスコアが良かったです
 
+### コンペ中と追加実験時の差分
+
+- スペクトルの3次微分がすべて0になっていたので抜きました
+- sample-wise scalingを、各サンプルごと→各サンプル各チャネルごと に変更しました
+- 連続特徴量を入れる側のMLPのDropoutを外しました
+- 学習時にCosineAnnealingを入れました
+
 ## リンク
 
 - [atmaCup #5に参加しました（Public2位→Private6位）](https://amalog.hateblo.jp/entry/atmacup-5)
