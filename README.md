@@ -43,11 +43,6 @@ $ poetry run python run_nn.py  # NNを訓練&予測
 - **Conv1Dは複数のkernel_sizeに並列に通し**、GlobalMaxPoolingをかけたあとにconcatしました
 - Conv1Dの**kernel_sizeを大きめに取りました**（最大101）
 
-以下は試していないことです。
-
-- AugmentationやTTAはやっていません。スペクトルのシフトや増幅、ノイズをかけるなどは効くかもな、と思っています
-- pseudo labelingはやっていません
-
 ### バリデーション
 
 - GroupKFoldとStratifiedKFoldを試しました
@@ -64,6 +59,11 @@ $ poetry run python run_nn.py  # NNを訓練&予測
 - **sample-wise scalingを、各サンプルごと→各サンプル各チャネルごと に変更しました**
 - 連続特徴量を入れる側のMLPのDropoutを外しました
 - 学習時にCosineAnnealingを入れました
+
+### 試していないこと
+
+- AugmentationやTTAはやっていません。スペクトルのシフトや増幅、ノイズをかけるなどは効くかもな、と思っています
+- pseudo labelingはやっていません
 
 ## リンク
 
