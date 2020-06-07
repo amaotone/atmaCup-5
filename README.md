@@ -37,6 +37,11 @@ $ poetry run python run_nn.py  # NNを訓練&予測
 - Conv1Dは複数のkernel_sizeに並列に通し、GlobalMaxPoolingをかけたあとにconcatしました
 - Conv1Dのkernel_sizeを大きめに取ることでスコアが改善しました
 
+以下は試していないことです。
+
+- AugmentationやTTAはやっていません。スペクトルのシフトや増幅、ノイズをかけるなどは効く可能性があります
+- pseudo labelingはやっていません。問題設定上効くと思われます
+
 ### バリデーション
 
 - GroupKFoldとStratifiedKFoldを試しました
