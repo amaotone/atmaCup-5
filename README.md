@@ -39,8 +39,8 @@ $ poetry run python run_nn.py  # NNを訓練&予測
 
 以下は試していないことです。
 
-- AugmentationやTTAはやっていません。スペクトルのシフトや増幅、ノイズをかけるなどは効く可能性があります
-- pseudo labelingはやっていません。問題設定上効くと思われます
+- AugmentationやTTAはやっていません。スペクトルのシフトや増幅、ノイズをかけるなどは効くかもな、と思っています
+- pseudo labelingはやっていません
 
 ### バリデーション
 
