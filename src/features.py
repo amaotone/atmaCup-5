@@ -10,6 +10,7 @@ from tqdm import tqdm
 
 @cached_feature("all", "working")
 def create_all_df(train, test):
+    """trainとtestをくっつけたDataFrameを作る"""
     print("prepare all_df")
     all_df = pd.concat([train, test], ignore_index=True, sort=False)
     return all_df
@@ -17,6 +18,7 @@ def create_all_df(train, test):
 
 @cached_feature("spec", "working")
 def create_spec_df(spec_dir: Path):
+    """スペクトルデータをひとつのDataFrameにまとめる"""
     print("prepare spec_df")
     dfs = []
     for path in tqdm(all_df.spectrum_filename):
@@ -32,6 +34,7 @@ def create_spec_df(spec_dir: Path):
 
 @cached_feature("spec_peak_around", "working")
 def get_peak_around(spec):
+    """ピーク周りの波形を取り出す"""
     print("prepare peak_around")
 
     def inner(x):
@@ -46,8 +49,22 @@ def get_peak_around(spec):
     return peak_around.reset_index()
 
 
+@cached_feature("intensity_stats")
+def create_intensity_stats(df, spec):
+    """スペクトル全体の基本統計量を取る"""
+    print("create instensity_stats")
+    key = "spectrum_filename"
+    feat = spec.groupby(key).intensity.agg(
+        ["min", "max", "mean", "std", "median", scipy.stats.skew, scipy.stats.kurtosis]
+    )
+    feat.columns = "intensity_" + feat.columns
+    df = df.merge(feat, how="left", left_on=key, right_index=True)
+    return df.iloc[:, -len(feat.columns) :]
+
+
 @cached_feature("peak_around")
 def create_peak_around_feature(df, peak_around):
+    """ピークまわりの基本統計量を取る"""
     print("create peak_around feature")
     peak = peak_around.set_index("spectrum_filename")
     feat = pd.DataFrame(index=peak.index)
@@ -65,20 +82,9 @@ def create_peak_around_feature(df, peak_around):
     return df.iloc[:, -len(feat.columns) :]
 
 
-@cached_feature("intensity_stats")
-def create_intensity_stats(df, spec):
-    print("create instensity_stats")
-    key = "spectrum_filename"
-    feat = spec.groupby(key).intensity.agg(
-        ["min", "max", "mean", "std", "median", scipy.stats.skew, scipy.stats.kurtosis]
-    )
-    feat.columns = "intensity_" + feat.columns
-    df = df.merge(feat, how="left", left_on=key, right_index=True)
-    return df.iloc[:, -len(feat.columns) :]
-
-
 @cached_feature("fitting")
 def create_fitting(df, fitting):
+    """fittingをmainに結合する"""
     print("create fitting")
     df = df.merge(fitting, how="left", on="spectrum_id")
     return df[fitting.columns].drop("spectrum_id", axis=1)
@@ -86,6 +92,7 @@ def create_fitting(df, fitting):
 
 @cached_feature("fitting_combination")
 def create_fitting_combination(df, fitting):
+    """fittingに対して四則演算する"""
     print("create fitting_combination feature")
     df = df.merge(fitting, how="left", on="spectrum_id")
     df["params1_div_params3"] = df["params1"] / df["params3"]
@@ -99,6 +106,7 @@ def create_fitting_combination(df, fitting):
 
 @cached_feature("savgol_peak")
 def create_savgol_peak(df, spec):
+    """Savitzky-Golay Filteringしたスペクトルに対して統計量を取る"""
     print("create savgol_peak feature")
     feat = pd.DataFrame(index=df.spectrum_filename.unique())
     for name, sp in tqdm(
@@ -132,6 +140,7 @@ def create_savgol_peak(df, spec):
 
 @cached_feature("spec_percentile")
 def create_spec_percentile(df, spec):
+    """最大ピークに対してn%の高さで切り、その高さでのピークの個数や、ピークの存在する領域幅を取る"""
     print("create spec_percentile feature")
     spec = spec.copy()
     spec["intensity"] -= spec.groupby("spectrum_filename").intensity.transform("min")
